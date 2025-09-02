@@ -93,7 +93,6 @@ def run_scheduler():
         "stoploss": "-",
         "reason": "🚀 Bot Started Successfully!"
     })
-    :
     schedule.every(30).minutes.do(scan_coins)
     schedule.every().hour.do(scan_coins)
     print("✅ Swing Bot started (scans every 30m & 1h)...")
