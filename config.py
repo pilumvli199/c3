@@ -1,0 +1,14 @@
+import os
+
+TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
+TELEGRAM_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID")
+
+FULL_COINS = ["BTCUSDT", "ETHUSDT", "SOLUSDT", "XRPUSDT"]
+LITE_COINS = ["BNBUSDT", "LTCUSDT", "AVAXUSDT", "LINKUSDT", "ADAUSDT", "DOGEUSDT"]
+
+CONFIDENCE_THRESHOLD = 60
+SCAN_INTERVALS = [30, 60]
+TIMEFRAMES = ["30m", "1h"]
+
+BINANCE_BASE = "https://api.binance.com/api/v3"
+DERIBIT_BASE = "https://www.deribit.com/api/v2"
