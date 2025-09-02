@@ -1,15 +1,9 @@
 from openai import OpenAI
 import json
 
-# Initialize OpenAI client
 client = OpenAI()
 
 def get_signal(summary: dict, risk_reward=2):
-    """
-    Uses GPT-4o-mini to generate trading signal based on summary.
-    Compatible with openai>=1.0.0 SDK.
-    """
-
     prompt = f"""Symbol: {summary['symbol']}
 Price Action: {summary['price_action']}
 Support/Resistance: {summary['support_resistance']}
@@ -37,9 +31,17 @@ Rules: Risk-Reward {risk_reward}:1. Respond JSON only in format:
 
         raw_text = response.choices[0].message.content.strip()
 
-        # Try to parse JSON
-        return json.loads(raw_text)
+        # Debug log
+        print(f"🔍 GPT Raw Response: {raw_text}")
+
+        # Try to parse JSON safely
+        try:
+            return json.loads(raw_text)
+        except json.JSONDecodeError:
+            print("⚠️ Failed to parse JSON, returning None")
+            return None
 
     except Exception as e:
         print(f"⚠️ GPT error: {e}")
         return None
+
