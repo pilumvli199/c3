@@ -1,9 +1,16 @@
 from openai import OpenAI
 import json
+import re
 
+# Initialize OpenAI client (reads OPENAI_API_KEY from env automatically)
 client = OpenAI()
 
 def get_signal(summary: dict, risk_reward=2):
+    """
+    Uses GPT-4o-mini to generate trading signal based on market summary.
+    Ensures JSON parsing works even if GPT wraps output in ```json ... ``` fences.
+    """
+
     prompt = f"""Symbol: {summary['symbol']}
 Price Action: {summary['price_action']}
 Support/Resistance: {summary['support_resistance']}
@@ -23,25 +30,24 @@ Rules: Risk-Reward {risk_reward}:1. Respond JSON only in format:
 }}"""
 
     try:
+        # Call GPT
         response = client.chat.completions.create(
             model="gpt-4o-mini",
             messages=[{"role": "user", "content": prompt}],
             temperature=0.4
         )
 
+        # Raw text
         raw_text = response.choices[0].message.content.strip()
-
-        # Debug log
         print(f"🔍 GPT Raw Response: {raw_text}")
 
-        # Try to parse JSON safely
-        try:
-            return json.loads(raw_text)
-        except json.JSONDecodeError:
-            print("⚠️ Failed to parse JSON, returning None")
-            return None
+        # --- Clean response ---
+        # Remove markdown code fences like ```json ... ```
+        cleaned = re.sub(r"```(json)?", "", raw_text).strip("` \n")
+
+        # Parse JSON safely
+        return json.loads(cleaned)
 
     except Exception as e:
         print(f"⚠️ GPT error: {e}")
         return None
-
